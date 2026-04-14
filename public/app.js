@@ -122,8 +122,12 @@ function playVoteVideo(choice) {
     }
 
     video.muted = true;
+    video.defaultMuted = true;
     video.playsInline = true;
     video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "true");
+    video.autoplay = true;
+    video.loop = true;
     video.currentTime = 0;
 
     const tryPlay = () => {
@@ -257,6 +261,9 @@ async function tryEnableVideos() {
     try {
       await tryVideoSource(magoVideo, src);
       magoVideo.preload = "auto";
+      magoVideo.defaultMuted = true;
+      magoVideo.muted = true;
+      magoVideo.setAttribute("webkit-playsinline", "true");
       break;
     } catch (error) {
       // Keep trying.
@@ -267,6 +274,9 @@ async function tryEnableVideos() {
     try {
       await tryVideoSource(sanchezVideo, src);
       sanchezVideo.preload = "auto";
+      sanchezVideo.defaultMuted = true;
+      sanchezVideo.muted = true;
+      sanchezVideo.setAttribute("webkit-playsinline", "true");
       break;
     } catch (error) {
       // Keep trying.
@@ -313,19 +323,9 @@ async function vote(choice) {
     celebrateVote();
     setStatus(`Votaste por ${choice === "mago" ? "El Mago" : "Camilo Sanchez"}.`, "ok");
   } catch (error) {
-    lockedChoice = previousLockedChoice;
-    if (!lockedChoice) {
-      candidateCards.forEach((card) => {
-        card.classList.remove("selected", "locked-opponent");
-      });
-      avatarVideos.forEach((video) => {
-        video.pause();
-        video.currentTime = 0;
-      });
-    } else {
-      setVotedCandidate(lockedChoice);
-      playVoteVideo(lockedChoice);
-    }
+    lockedChoice = previousLockedChoice || choice;
+    setVotedCandidate(lockedChoice);
+    playVoteVideo(lockedChoice);
     const friendly =
       error?.message === "NO_HTTP_CONTEXT"
         ? "Abre esta pagina desde una URL http/https valida."
