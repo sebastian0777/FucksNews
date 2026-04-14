@@ -17,7 +17,9 @@ const API_BASE =
     ? location.origin
     : null;
 const REQUEST_TIMEOUT_MS = 12000;
+const RESULTS_POLL_MS = 1500;
 let lockedChoice = "";
+let pollingInFlight = false;
 const MAGO_CANDIDATES = [
   "./assets/mago.png",
   "./assets/caricatura-mago.png",
@@ -289,13 +291,17 @@ async function loadResults() {
     setStatus("Abre la pagina desde http://localhost:3000 para poder votar.", "error");
     return;
   }
+  if (pollingInFlight) return;
 
+  pollingInFlight = true;
   try {
-    const data = await requestJson("/api/results", { method: "GET" });
+    const data = await requestJson(`/api/results?t=${Date.now()}`, { method: "GET" });
     if (data?.ok) renderResults(data.summary);
     if (statusEl.classList.contains("error")) setStatus("");
   } catch (error) {
     setStatus("No se pudo conectar la votacion. Revisa el servidor.", "error");
+  } finally {
+    pollingInFlight = false;
   }
 }
 
@@ -359,4 +365,4 @@ if (introOverlayEl) {
 loadResults();
 tryEnableHeroImage();
 tryEnableVideos();
-setInterval(loadResults, 10000);
+setInterval(loadResults, RESULTS_POLL_MS);
