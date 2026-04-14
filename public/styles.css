@@ -132,6 +132,42 @@ body {
   filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35));
 }
 
+.live-counter {
+  position: fixed;
+  right: 18px;
+  top: 110px;
+  z-index: 12;
+  min-width: 170px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(8, 16, 54, 0.66);
+  backdrop-filter: blur(8px);
+  padding: 10px 12px;
+  box-shadow: 0 12px 24px rgba(2, 4, 20, 0.35);
+}
+
+.live-counter-title {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.live-counter-total {
+  margin: 2px 0 8px;
+  font-family: "Luckiest Guy", "Baloo 2", sans-serif;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.live-counter-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 2px 0;
+}
+
 .brand {
   margin: 0 0 8px;
   letter-spacing: 0.16em;
@@ -519,6 +555,13 @@ h1 {
     left: 10px;
   }
 
+  .live-counter {
+    right: 10px;
+    top: 98px;
+    min-width: 145px;
+    padding: 8px 10px;
+  }
+
   .duel {
     grid-template-columns: 1fr;
   }
@@ -546,6 +589,13 @@ h1 {
     height: 72px;
     top: 8px;
     left: 8px;
+  }
+
+  .live-counter {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 8px;
   }
 
   .brand {

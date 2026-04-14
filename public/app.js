@@ -7,6 +7,9 @@ const magoTopBarEl = document.getElementById("magoTopBar");
 const sanchezTopBarEl = document.getElementById("sanchezTopBar");
 const magoTopPctEl = document.getElementById("magoTopPct");
 const sanchezTopPctEl = document.getElementById("sanchezTopPct");
+const sideTotalCountEl = document.getElementById("sideTotalCount");
+const sideMagoPctEl = document.getElementById("sideMagoPct");
+const sideSanchezPctEl = document.getElementById("sideSanchezPct");
 const cardEl = document.querySelector(".card");
 const candidateCards = document.querySelectorAll(".candidate");
 const avatarVideos = document.querySelectorAll(".avatar-video");
@@ -103,6 +106,9 @@ function renderResults(summary) {
   sanchezTopBarEl.style.width = sanchezPctText;
   magoTopPctEl.textContent = magoPctText;
   sanchezTopPctEl.textContent = sanchezPctText;
+  if (sideTotalCountEl) sideTotalCountEl.textContent = String(summary.total);
+  if (sideMagoPctEl) sideMagoPctEl.textContent = magoPctText;
+  if (sideSanchezPctEl) sideSanchezPctEl.textContent = sanchezPctText;
 }
 
 function setVotedCandidate(choice) {
