@@ -9,12 +9,14 @@ const magoTopPctEl = document.getElementById("magoTopPct");
 const sanchezTopPctEl = document.getElementById("sanchezTopPct");
 const cardEl = document.querySelector(".card");
 const candidateCards = document.querySelectorAll(".candidate");
+const avatarVideos = document.querySelectorAll(".avatar-video");
 const yearNowEl = document.getElementById("yearNow");
 const API_BASE =
   location.protocol === "http:" || location.protocol === "https:"
     ? location.origin
     : null;
 const REQUEST_TIMEOUT_MS = 12000;
+let lockedChoice = "";
 const MAGO_CANDIDATES = [
   "./assets/mago.png",
   "./assets/caricatura-mago.png",
@@ -25,6 +27,16 @@ const SANCHEZ_CANDIDATES = [
   "./assets/caricatura-sanchez.png",
   "./assets/caricatura sanchez.png"
 ];
+const MAGO_VIDEO_CANDIDATES = [
+  "./assets/mago.mp4",
+  "./assets/animacion.mp4",
+  "./animacion.mp4"
+];
+const SANCHEZ_VIDEO_CANDIDATES = [
+  "./assets/sanchez.mp4",
+  "./assets/animacion 2.mp4",
+  "./animacion 2.mp4"
+];
 
 function setStatus(message, type = "") {
   statusEl.textContent = message;
@@ -33,7 +45,9 @@ function setStatus(message, type = "") {
 
 function setLoading(loading) {
   voteAvatars.forEach((avatar) => {
-    avatar.disabled = loading;
+    const choice = avatar.dataset.choice;
+    const lockedByChoice = Boolean(lockedChoice) && choice !== lockedChoice;
+    avatar.disabled = loading || lockedByChoice;
     avatar.setAttribute("aria-busy", loading ? "true" : "false");
   });
 }
@@ -90,8 +104,25 @@ function renderResults(summary) {
 
 function setVotedCandidate(choice) {
   candidateCards.forEach((card) => {
-    const isSelected = card.dataset.candidate === choice;
+    const cardChoice = card.dataset.candidate;
+    const isSelected = cardChoice === choice;
     card.classList.toggle("selected", isSelected);
+    card.classList.toggle("locked-opponent", !isSelected);
+  });
+}
+
+function playVoteVideo(choice) {
+  avatarVideos.forEach((video) => {
+    const isSelected = video.dataset.video === choice;
+    if (!isSelected) {
+      video.pause();
+      video.currentTime = 0;
+      return;
+    }
+    const playPromise = video.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {});
+    }
   });
 }
 
@@ -140,6 +171,15 @@ function tryImageSource(src) {
   });
 }
 
+function tryVideoSource(videoEl, src) {
+  return new Promise((resolve, reject) => {
+    videoEl.src = src;
+    videoEl.onloadedmetadata = () => resolve(src);
+    videoEl.onerror = reject;
+    videoEl.load();
+  });
+}
+
 async function tryEnableHeroImage() {
   let magoSrc = "";
   let sanchezSrc = "";
@@ -178,6 +218,30 @@ async function tryEnableHeroImage() {
   }
 }
 
+async function tryEnableVideos() {
+  const magoVideo = document.querySelector('.avatar-video[data-video="mago"]');
+  const sanchezVideo = document.querySelector('.avatar-video[data-video="sanchez"]');
+  if (!magoVideo || !sanchezVideo) return;
+
+  for (const src of MAGO_VIDEO_CANDIDATES) {
+    try {
+      await tryVideoSource(magoVideo, src);
+      break;
+    } catch (error) {
+      // Keep trying.
+    }
+  }
+
+  for (const src of SANCHEZ_VIDEO_CANDIDATES) {
+    try {
+      await tryVideoSource(sanchezVideo, src);
+      break;
+    } catch (error) {
+      // Keep trying.
+    }
+  }
+}
+
 async function loadResults() {
   if (!API_BASE) {
     setStatus("Abre la pagina desde http://localhost:3000 para poder votar.", "error");
@@ -209,8 +273,10 @@ async function vote(choice) {
     if (!data?.ok) {
       throw new Error(data?.error || "No se pudo registrar el voto.");
     }
+    lockedChoice = choice;
     renderResults(data.summary);
     setVotedCandidate(choice);
+    playVoteVideo(choice);
     celebrateVote();
     setStatus(`Votaste por ${choice === "mago" ? "El Mago" : "Camilo Sanchez"}.`, "ok");
   } catch (error) {
@@ -234,4 +300,5 @@ if (yearNowEl) {
 
 loadResults();
 tryEnableHeroImage();
+tryEnableVideos();
 setInterval(loadResults, 10000);

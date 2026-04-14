@@ -246,11 +246,24 @@ h1 {
   touch-action: manipulation;
 }
 
+.avatar-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 260ms ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
 .avatar::after {
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(to top, rgba(3, 9, 36, 0.14), rgba(3, 9, 36, 0.01));
+  z-index: 2;
 }
 
 .avatar--mago {
@@ -288,10 +301,23 @@ h1 {
     0 0 0 2px rgba(255, 255, 255, 0.4) inset;
 }
 
+.candidate.selected .avatar-video {
+  opacity: 1;
+}
+
 .candidate.selected h2::after {
   content: " - Votaste por este";
   font-size: 0.9rem;
   color: #ffe9a4;
+}
+
+.candidate.locked-opponent .avatar {
+  filter: grayscale(1) brightness(0.9);
+  opacity: 0.76;
+}
+
+.candidate.locked-opponent .vote-avatar {
+  pointer-events: none;
 }
 
 .results {
