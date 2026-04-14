@@ -65,6 +65,8 @@ function getMimeType(filePath) {
   if (ext === ".css") return "text/css; charset=utf-8";
   if (ext === ".js") return "application/javascript; charset=utf-8";
   if (ext === ".json") return "application/json; charset=utf-8";
+  if (ext === ".mp4") return "video/mp4";
+  if (ext === ".webm") return "video/webm";
   if (ext === ".png") return "image/png";
   if (ext === ".jpg" || ext === ".jpeg") return "image/jpeg";
   if (ext === ".svg") return "image/svg+xml";
