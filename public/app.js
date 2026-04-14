@@ -149,6 +149,13 @@ function playVoteVideo(choice) {
   });
 }
 
+function previewSelection(choice) {
+  if (lockedChoice && lockedChoice !== choice) return;
+  lockedChoice = choice;
+  setVotedCandidate(choice);
+  playVoteVideo(choice);
+}
+
 function pulseCard() {
   cardEl.classList.remove("flash");
   // Trigger reflow to replay animation.
@@ -330,6 +337,12 @@ async function vote(choice) {
 }
 
 voteAvatars.forEach((avatar) => {
+  avatar.addEventListener("pointerdown", () => previewSelection(avatar.dataset.choice), {
+    passive: true
+  });
+  avatar.addEventListener("touchstart", () => previewSelection(avatar.dataset.choice), {
+    passive: true
+  });
   avatar.addEventListener("click", () => vote(avatar.dataset.choice));
 });
 

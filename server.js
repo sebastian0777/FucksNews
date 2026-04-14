@@ -88,14 +88,54 @@ function serveStatic(req, res, pathname) {
     return;
   }
 
-  fs.readFile(fullPath, (err, content) => {
-    if (err) {
+  fs.stat(fullPath, (statErr, stats) => {
+    if (statErr || !stats.isFile()) {
       res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
       res.end("Not found");
       return;
     }
-    res.writeHead(200, { "Content-Type": getMimeType(fullPath) });
-    res.end(content);
+
+    const mimeType = getMimeType(fullPath);
+    const range = req.headers.range;
+    const isVideo = mimeType.startsWith("video/");
+
+    if (isVideo && range) {
+      const parts = String(range).replace(/bytes=/, "").split("-");
+      const start = Number.parseInt(parts[0], 10);
+      const end = parts[1] ? Number.parseInt(parts[1], 10) : stats.size - 1;
+
+      if (
+        Number.isNaN(start) ||
+        Number.isNaN(end) ||
+        start < 0 ||
+        end >= stats.size ||
+        start > end
+      ) {
+        res.writeHead(416, {
+          "Content-Range": `bytes */${stats.size}`
+        });
+        res.end();
+        return;
+      }
+
+      const chunkSize = end - start + 1;
+      res.writeHead(206, {
+        "Content-Range": `bytes ${start}-${end}/${stats.size}`,
+        "Accept-Ranges": "bytes",
+        "Content-Length": chunkSize,
+        "Content-Type": mimeType,
+        "Cache-Control": "public, max-age=3600"
+      });
+      fs.createReadStream(fullPath, { start, end }).pipe(res);
+      return;
+    }
+
+    res.writeHead(200, {
+      "Content-Type": mimeType,
+      "Content-Length": stats.size,
+      "Accept-Ranges": "bytes"
+    });
+    fs.createReadStream(fullPath).pipe(res);
   });
 }
 
