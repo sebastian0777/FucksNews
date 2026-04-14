@@ -120,9 +120,31 @@ function playVoteVideo(choice) {
       video.currentTime = 0;
       return;
     }
-    const playPromise = video.play();
-    if (playPromise && typeof playPromise.catch === "function") {
-      playPromise.catch(() => {});
+
+    video.muted = true;
+    video.playsInline = true;
+    video.setAttribute("playsinline", "");
+    video.currentTime = 0;
+
+    const tryPlay = () => {
+      const playPromise = video.play();
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => {
+          // Retry once after explicit load for stricter mobile autoplay policies.
+          video.load();
+          const retryPromise = video.play();
+          if (retryPromise && typeof retryPromise.catch === "function") {
+            retryPromise.catch(() => {});
+          }
+        });
+      }
+    };
+
+    if (video.readyState >= 2) {
+      tryPlay();
+    } else {
+      video.addEventListener("canplay", tryPlay, { once: true });
+      video.load();
     }
   });
 }
@@ -227,6 +249,7 @@ async function tryEnableVideos() {
   for (const src of MAGO_VIDEO_CANDIDATES) {
     try {
       await tryVideoSource(magoVideo, src);
+      magoVideo.preload = "auto";
       break;
     } catch (error) {
       // Keep trying.
@@ -236,6 +259,7 @@ async function tryEnableVideos() {
   for (const src of SANCHEZ_VIDEO_CANDIDATES) {
     try {
       await tryVideoSource(sanchezVideo, src);
+      sanchezVideo.preload = "auto";
       break;
     } catch (error) {
       // Keep trying.

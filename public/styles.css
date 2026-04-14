@@ -189,7 +189,7 @@ h1 {
 }
 
 .compare-fill.mago {
-  background: linear-gradient(90deg, #ffd861, #ffbb08);
+  background: linear-gradient(90deg, #2d7bff, #1b55d8);
 }
 
 .compare-fill.sanchez {
@@ -331,6 +331,10 @@ h1 {
 
 .candidate.selected .avatar-video {
   opacity: 1;
+}
+
+.candidate.selected .avatar::after {
+  background: transparent;
 }
 
 .candidate.selected h2::after {
