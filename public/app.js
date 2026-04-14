@@ -7,9 +7,8 @@ const magoTopBarEl = document.getElementById("magoTopBar");
 const sanchezTopBarEl = document.getElementById("sanchezTopBar");
 const magoTopPctEl = document.getElementById("magoTopPct");
 const sanchezTopPctEl = document.getElementById("sanchezTopPct");
-const sideTotalCountEl = document.getElementById("sideTotalCount");
-const sideMagoPctEl = document.getElementById("sideMagoPct");
-const sideSanchezPctEl = document.getElementById("sideSanchezPct");
+const countdownValueEl = document.getElementById("countdownValue");
+const countdownStateEl = document.getElementById("countdownState");
 const cardEl = document.querySelector(".card");
 const candidateCards = document.querySelectorAll(".candidate");
 const avatarVideos = document.querySelectorAll(".avatar-video");
@@ -21,8 +20,11 @@ const API_BASE =
     : null;
 const REQUEST_TIMEOUT_MS = 12000;
 const RESULTS_POLL_MS = 1500;
+const COUNTDOWN_SECONDS = 10 * 60;
 let lockedChoice = "";
 let pollingInFlight = false;
+let votingClosed = false;
+let remainingSeconds = COUNTDOWN_SECONDS;
 const MAGO_CANDIDATES = [
   "./assets/mago.png",
   "./assets/caricatura-mago.png",
@@ -53,7 +55,7 @@ function setLoading(loading) {
   voteAvatars.forEach((avatar) => {
     const choice = avatar.dataset.choice;
     const lockedByChoice = Boolean(lockedChoice) && choice !== lockedChoice;
-    avatar.disabled = loading || lockedByChoice;
+    avatar.disabled = loading || lockedByChoice || votingClosed;
     avatar.setAttribute("aria-busy", loading ? "true" : "false");
   });
 }
@@ -106,9 +108,29 @@ function renderResults(summary) {
   sanchezTopBarEl.style.width = sanchezPctText;
   magoTopPctEl.textContent = magoPctText;
   sanchezTopPctEl.textContent = sanchezPctText;
-  if (sideTotalCountEl) sideTotalCountEl.textContent = String(summary.total);
-  if (sideMagoPctEl) sideMagoPctEl.textContent = magoPctText;
-  if (sideSanchezPctEl) sideSanchezPctEl.textContent = sanchezPctText;
+}
+
+function formatCountdown(sec) {
+  const safe = Math.max(0, sec);
+  const mm = String(Math.floor(safe / 60)).padStart(2, "0");
+  const ss = String(safe % 60).padStart(2, "0");
+  return `${mm}:${ss}`;
+}
+
+function tickCountdown() {
+  if (!countdownValueEl || !countdownStateEl) return;
+  countdownValueEl.textContent = formatCountdown(remainingSeconds);
+
+  if (remainingSeconds <= 0) {
+    votingClosed = true;
+    countdownStateEl.textContent = "Finalizado";
+    setLoading(false);
+    setStatus("Tiempo finalizado. Votacion cerrada.", "error");
+    return;
+  }
+
+  remainingSeconds -= 1;
+  setTimeout(tickCountdown, 1000);
 }
 
 function setVotedCandidate(choice) {
@@ -162,6 +184,7 @@ function playVoteVideo(choice) {
 }
 
 function previewSelection(choice) {
+  if (votingClosed) return;
   if (lockedChoice && lockedChoice !== choice) return;
   lockedChoice = choice;
   setVotedCandidate(choice);
@@ -316,6 +339,10 @@ async function vote(choice) {
     setStatus("No se puede votar sin servidor activo.", "error");
     return;
   }
+  if (votingClosed) {
+    setStatus("Tiempo finalizado. Votacion cerrada.", "error");
+    return;
+  }
 
   const previousLockedChoice = lockedChoice;
   lockedChoice = choice;
@@ -371,4 +398,5 @@ if (introOverlayEl) {
 loadResults();
 tryEnableHeroImage();
 tryEnableVideos();
+tickCountdown();
 setInterval(loadResults, RESULTS_POLL_MS);
