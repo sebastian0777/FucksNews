@@ -127,7 +127,7 @@ function playVoteVideo(choice) {
     video.setAttribute("playsinline", "");
     video.setAttribute("webkit-playsinline", "true");
     video.autoplay = true;
-    video.loop = true;
+    video.loop = false;
     video.currentTime = 0;
 
     const tryPlay = () => {
