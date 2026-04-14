@@ -43,6 +43,34 @@ body {
   animation: gradient-drift 40s ease-in-out infinite;
 }
 
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.06), transparent 40%),
+    linear-gradient(
+      90deg,
+      #153eae 0%,
+      #1f52c8 48%,
+      #cf2b59 52%,
+      #da2958 100%
+    );
+  animation: intro-out 500ms ease 1.5s forwards;
+}
+
+.intro-logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(46vw, 230px);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.4));
+  animation: intro-pop 700ms ease;
+}
+
 .bg-waves {
   position: fixed;
   inset: -20% -5% auto -5%;
@@ -447,6 +475,25 @@ h1 {
   }
   100% {
     transform: scale(1);
+  }
+}
+
+@keyframes intro-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes intro-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
 }
 

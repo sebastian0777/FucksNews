@@ -11,6 +11,7 @@ const cardEl = document.querySelector(".card");
 const candidateCards = document.querySelectorAll(".candidate");
 const avatarVideos = document.querySelectorAll(".avatar-video");
 const yearNowEl = document.getElementById("yearNow");
+const introOverlayEl = document.getElementById("introOverlay");
 const API_BASE =
   location.protocol === "http:" || location.protocol === "https:"
     ? location.origin
@@ -310,6 +311,12 @@ voteAvatars.forEach((avatar) => {
 
 if (yearNowEl) {
   yearNowEl.textContent = String(new Date().getFullYear());
+}
+
+if (introOverlayEl) {
+  setTimeout(() => {
+    introOverlayEl.remove();
+  }, 2100);
 }
 
 loadResults();
