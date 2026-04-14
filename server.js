@@ -6,7 +6,7 @@ const { URL } = require("url");
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, "public");
-const DATA_DIR = path.join(__dirname, "data");
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
 const VOTES_FILE = path.join(DATA_DIR, "votes.json");
 
 const VALID_CHOICES = new Set(["mago", "sanchez"]);
@@ -135,6 +135,11 @@ const server = http.createServer((req, res) => {
   if (req.method === "GET" && pathname === "/api/results") {
     const data = readData();
     sendJson(res, 200, { ok: true, summary: getVoteSummary(data) });
+    return;
+  }
+
+  if (req.method === "GET" && pathname === "/healthz") {
+    sendJson(res, 200, { ok: true, status: "up" });
     return;
   }
 

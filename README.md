@@ -31,6 +31,15 @@ Para usar la imagen de caricaturas en el hero:
 3. Genera el QR con la URL publica.
 4. Muestra el QR en stream/video para que la gente escanee y vote.
 
+## Deploy recomendado (Render)
+
+GitHub Pages no puede ejecutar la API de votos. Para que SI funcione la votacion:
+
+1. En Render, crea un servicio desde este repo.
+2. Render detecta `render.yaml` automaticamente.
+3. Espera deploy y abre la URL publica de Render.
+4. En `/admin.html`, genera QR con esa URL publica.
+
 ## 3) Seguridad basica incluida
 
 - 1 voto por navegador (cookie).
