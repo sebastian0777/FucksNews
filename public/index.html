@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Votacion Fucksnews</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <img class="page-logo" src="./assets/logo.png" alt="Logo Fucksnews" />
+    <div class="bg-waves" aria-hidden="true"></div>
+    <div class="bg-noise" aria-hidden="true"></div>
+    <main class="page">
+      <section class="card">
+        <header class="hero">
+          <p class="brand">FUCKSNEWS COMEDY BATTLE</p>
+          <h1>Guerra de noticias</h1>
+          <div class="leader-top">
+            <div class="leader-head compare-head">
+              <span>El Mago <strong id="magoTopPct">0%</strong></span>
+              <span><strong id="sanchezTopPct">0%</strong> Camilo Sanchez</span>
+            </div>
+            <div class="compare-track">
+              <div class="compare-fill mago" id="magoTopBar"></div>
+              <div class="compare-fill sanchez" id="sanchezTopBar"></div>
+            </div>
+          </div>
+        </header>
+
+        <div id="status" class="status" aria-live="polite"></div>
+
+        <section class="duel">
+          <article class="candidate mago" data-candidate="mago">
+            <button class="avatar avatar--mago vote-avatar" data-choice="mago" aria-label="Votar por El Mago">
+            </button>
+            <h2>El Mago</h2>
+          </article>
+
+          <article class="candidate sanchez" data-candidate="sanchez">
+            <button class="avatar avatar--sanchez vote-avatar" data-choice="sanchez" aria-label="Votar por Camilo Sanchez">
+            </button>
+            <h2>Camilo Sanchez</h2>
+          </article>
+        </section>
+
+        <section class="results">
+          <h3>Barra de apoyo</h3>
+          <div class="score-line">
+            <span>El Mago</span>
+            <strong id="magoCount">0</strong>
+          </div>
+          <div class="score-line">
+            <span>Camilo Sanchez</span>
+            <strong id="sanchezCount">0</strong>
+          </div>
+
+          <div class="score-total">
+            <span>Total votos</span>
+            <strong id="totalCount">0</strong>
+          </div>
+        </section>
+
+        <footer class="copyright">
+          <small>&copy; <span id="yearNow"></span> WeWeb. Todos los derechos reservados.</small>
+        </footer>
+
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

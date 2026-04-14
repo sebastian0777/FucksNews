@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Fucksnews</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="card">
+        <p class="brand">FUCKSNEWS - ADMIN</p>
+        <h1>Generador de QR</h1>
+        <p class="subtitle">
+          Comparte este QR en pantalla para que la audiencia escanee y vote.
+        </p>
+
+        <div class="result-row">
+          <span>URL de votación</span>
+        </div>
+        <input
+          id="voteUrl"
+          style="
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            background: rgba(15, 23, 42, 0.45);
+            color: #f8fafc;
+            padding: 10px;
+            margin-bottom: 14px;
+          "
+        />
+        <p id="adminHint" style="margin: 0 0 10px; color: #ffd0da; font-weight: 700"></p>
+        <button class="vote-btn mago" id="generateBtn">Generar QR</button>
+
+        <div style="margin-top: 16px; text-align: center">
+          <img
+            id="qrImage"
+            alt="QR de votacion"
+            style="max-width: 280px; width: 100%; border-radius: 10px"
+          />
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const input = document.getElementById("voteUrl");
+      const img = document.getElementById("qrImage");
+      const button = document.getElementById("generateBtn");
+      const hint = document.getElementById("adminHint");
+
+      input.value = `${location.origin}/`;
+      if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+        hint.textContent =
+          "Si votas desde celular, reemplaza localhost por la IP de tu PC (ej: http://192.168.1.20:3000/).";
+      } else {
+        hint.textContent = "";
+      }
+
+      function generate() {
+        const value = input.value.trim();
+        if (!value) return;
+        img.src =
+          "https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=" +
+          encodeURIComponent(value);
+      }
+
+      button.addEventListener("click", generate);
+      generate();
+    </script>
+  </body>
+</html>

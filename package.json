@@ -1,0 +1,10 @@
+{
+  "name": "fucksnews-votacion",
+  "version": "1.0.0",
+  "description": "Pagina de votacion para Fucksnews",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT"
+}
