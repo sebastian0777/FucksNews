@@ -263,6 +263,10 @@ async function vote(choice) {
     return;
   }
 
+  const previousLockedChoice = lockedChoice;
+  lockedChoice = choice;
+  setVotedCandidate(choice);
+  playVoteVideo(choice);
   setLoading(true);
   setStatus("Registrando tu voto...");
   try {
@@ -273,13 +277,23 @@ async function vote(choice) {
     if (!data?.ok) {
       throw new Error(data?.error || "No se pudo registrar el voto.");
     }
-    lockedChoice = choice;
     renderResults(data.summary);
-    setVotedCandidate(choice);
-    playVoteVideo(choice);
     celebrateVote();
     setStatus(`Votaste por ${choice === "mago" ? "El Mago" : "Camilo Sanchez"}.`, "ok");
   } catch (error) {
+    lockedChoice = previousLockedChoice;
+    if (!lockedChoice) {
+      candidateCards.forEach((card) => {
+        card.classList.remove("selected", "locked-opponent");
+      });
+      avatarVideos.forEach((video) => {
+        video.pause();
+        video.currentTime = 0;
+      });
+    } else {
+      setVotedCandidate(lockedChoice);
+      playVoteVideo(lockedChoice);
+    }
     const friendly =
       error?.message === "NO_HTTP_CONTEXT"
         ? "Abre esta pagina desde una URL http/https valida."
